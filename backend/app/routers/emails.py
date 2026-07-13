@@ -68,7 +68,17 @@ async def sync_mailbox(
     """
     # A demo account uses Gmail-shaped mock data.  It is intentionally kept
     # separate from a real Google account in the user profile.
-    provider = "gmail" if current_user.provider == "demo" or payload.provider == "demo" else payload.provider
+    raw_provider = payload.provider.lower()
+    if raw_provider == "google":
+        provider = "gmail"
+    elif raw_provider in {"microsoft", "microsoft-entra-id"}:
+        provider = "outlook"
+    else:
+        provider = raw_provider
+
+    if current_user.provider == "demo" or payload.provider == "demo":
+        provider = "gmail"
+
     if provider not in {"gmail", "outlook"}:
         raise HTTPException(status_code=400, detail="Unsupported email provider")
 
