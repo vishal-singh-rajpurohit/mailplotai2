@@ -1,0 +1,67 @@
+
+# Python & FastAPI Docker ignore file
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# mypy
+.mypy_cache/
+
+# Pyre
+.pyre/
+
+# Virtual environments
+venv/
+ENV/
+.env
+.venv/
+env/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dockerfile and compose if present (optional to include)
+Dockerfile*
+docker-compose*.yml
+
+# Git
+.git
+
+# Local data and secrets
+instance/
+secrets/
+
+# FastAPI specific
+*.db
+*.sqlite3
+
+# Logs
+*.log
