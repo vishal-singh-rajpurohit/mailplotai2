@@ -1,0 +1,117 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: inboxpilot-db-prod
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-inboxpilot}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-inboxpilot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: inboxpilot-redis-prod
+    restart: always
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_prod_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: inboxpilot-backend-prod
+    restart: always
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+    environment:
+      - APP_ENV=production
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-inboxpilot}
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_CHAT_MODEL=${OPENAI_CHAT_MODEL:-gpt-4o}
+      - OPENAI_EMBEDDING_MODEL=${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID}
+      - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET}
+      - MICROSOFT_TENANT_ID=${MICROSOFT_TENANT_ID:-common}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build: ./backend
+    container_name: inboxpilot-worker-prod
+    restart: always
+    command: celery -A app.tasks.celery_app worker --loglevel=warning --concurrency=4
+    environment:
+      - APP_ENV=production
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-inboxpilot}
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_CHAT_MODEL=${OPENAI_CHAT_MODEL:-gpt-4o}
+      - OPENAI_EMBEDDING_MODEL=${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID}
+      - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET}
+      - MICROSOFT_TENANT_ID=${MICROSOFT_TENANT_ID:-common}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost}
+    container_name: inboxpilot-frontend-prod
+    restart: always
+    environment:
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost}
+      - BACKEND_API_URL=http://backend:8000
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - MICROSOFT_CLIENT_ID=${MICROSOFT_CLIENT_ID}
+      - MICROSOFT_CLIENT_SECRET=${MICROSOFT_CLIENT_SECRET}
+      - MICROSOFT_TENANT_ID=${MICROSOFT_TENANT_ID:-common}
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: inboxpilot-nginx-prod
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:

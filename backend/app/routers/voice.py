@@ -16,10 +16,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/voice", tags=["voice"])
 
 @router.post("/transcribe")
-async def transcribe_audio(
-    file: UploadFile = File(...),
-    current_user: User = Depends(get_current_user)
-):
+async def transcribe_audio(file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
     """
     Accepts raw multipart audio upload. Transcribes it using OpenAI Whisper API
     or falls back to mock transcript if OpenAI credentials are missing.
