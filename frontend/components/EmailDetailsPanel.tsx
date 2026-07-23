@@ -6,10 +6,7 @@ import { formatTime } from "@/lib/utils";
 import CategoryBadge from "./CategoryBadge";
 import UrgencyBadge from "./UrgencyBadge";
 import ReplyModal from "./ReplyModal";
-import { 
-  X, Calendar, CheckSquare, Users, Landmark, Tag, Shield, 
-  Sparkles, FileText, Globe, Send, MessageSquare, ChevronRight, AlertTriangle 
-} from "lucide-react";
+import { X, Calendar, CheckSquare, Sparkles, FileText, Globe, MessageSquare, AlertTriangle } from "lucide-react";
 
 interface EmailDetailsPanelProps {
   emailId: string | null;

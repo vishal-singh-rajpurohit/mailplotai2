@@ -62,4 +62,5 @@ export function useSyncEmails() {
     error: syncMutation.error || statusQuery.error,
   };
 }
+
 export type UseSyncEmailsReturn = ReturnType<typeof useSyncEmails>;

@@ -3,9 +3,8 @@
 import React from "react";
 import { useSession, signOut } from "next-auth/react";
 import { 
-  Inbox, AlertCircle, MessageSquare, Star, Settings, LogOut, 
-  Briefcase, User, Landmark, BookOpen, Shield, FileText, Calendar, HelpCircle,
-  BarChart3, LayoutDashboard, Compass, Sparkles
+  Inbox, AlertCircle, MessageSquare, LogOut, Briefcase, User, Landmark,
+  BookOpen, Shield, FileText, Calendar, BarChart3, Compass, Sparkles
 } from "lucide-react";
 
 interface AppSidebarProps {

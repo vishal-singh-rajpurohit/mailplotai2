@@ -21,7 +21,7 @@ const authProviders = [
   MicrosoftEntraIDProvider({
     clientId: process.env.MICROSOFT_CLIENT_ID || "microsoft-dummy-id",
     clientSecret: process.env.MICROSOFT_CLIENT_SECRET || "microsoft-dummy-secret",
-    tenantId: process.env.MICROSOFT_TENANT_ID || "common",
+    // tenantId: process.env.MICROSOFT_TENANT_ID || "common",
     authorization: {
       url: `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID || "common"}/oauth2/v2.0/authorize`,
       params: {
@@ -92,16 +92,17 @@ const authProviders = [
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: authProviders,
-  httpOptions: {
-    timeout: 30000,
-  },
+  ...({
+    httpOptions: {
+      timeout: 30000,
+    },
+  } as any),
   callbacks: {
     async jwt({ token, account, user }) {
       // Initial sign-in execution
       if (account && user) {
-        token.provider = account.provider === "credentials"
-          ? (user as any).provider || "demo"
-          : account.provider;
+        token.provider = account.provider === "credentials" ? (user as any).provider || "demo" : account.provider;
+
         token.providerAccountId = account.providerAccountId;
 
         if (account.provider === "credentials") {

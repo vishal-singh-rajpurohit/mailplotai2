@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Mic, ShieldAlert, Mail, ArrowRight, CheckCircle2, ChevronRight, Play } from "lucide-react";
+import { Sparkles, Mic, ShieldAlert, Mail, ArrowRight, Play } from "lucide-react";
 
 export default function Home() {
   return (
@@ -183,8 +183,8 @@ export default function Home() {
       <footer className="relative z-10 px-6 py-6 border-t border-white/5 max-w-7xl mx-auto w-full flex items-center justify-between text-xs text-slate-600">
         <span>© 2026 InboxPilot AI SaaS. All rights reserved.</span>
         <div className="flex gap-4">
-          <a href="#" className="hover:text-slate-400 transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-slate-400 transition-colors">Terms of Service</a>
+          <Link href="/privacy-policy" className="hover:text-slate-400 transition-colors">Privacy Policy</Link>
+          <Link href="/terms-and-condition" className="hover:text-slate-400 transition-colors">Terms of Service</Link>
         </div>
       </footer>
 

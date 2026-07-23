@@ -13,25 +13,37 @@ interface EmailFilters {
 }
 
 export function useEmails(filters: EmailFilters = {}) {
+
   return useQuery<EmailType[]>({
+
     queryKey: ["emails", filters],
+
     queryFn: async () => {
+
       const params = new URLSearchParams();
+
       if (filters.category) params.append("category", filters.category);
+
       if (filters.is_read !== undefined && filters.is_read !== null) {
         params.append("is_read", String(filters.is_read));
       }
+
       if (filters.is_urgent !== undefined && filters.is_urgent !== null) {
         params.append("is_urgent", String(filters.is_urgent));
       }
+
       if (filters.needs_reply !== undefined && filters.needs_reply !== null) {
         params.append("needs_reply", String(filters.needs_reply));
       }
+
       if (filters.date_from) params.append("date_from", filters.date_from);
+
       if (filters.date_to) params.append("date_to", filters.date_to);
 
       const res = await apiClient.get(`/api/v1/emails?${params.toString()}`);
+
       return z.array(EmailSchema).parse(res.data);
+
     },
   });
 }

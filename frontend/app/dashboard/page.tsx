@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Search, Mic, RefreshCw, Sparkles, Filter, X, Check } from "lucide-react";
+import { Search, X, Check } from "lucide-react";
 
 import AppSidebar from "@/components/AppSidebar";
 import SyncStatus from "@/components/SyncStatus";
@@ -64,7 +64,7 @@ export default function Dashboard() {
       const updatedFilters: typeof filters = {};
       if (parsedFilters.category) updatedFilters.category = parsedFilters.category;
       if (parsedFilters.is_unread !== null) updatedFilters.is_read = !parsedFilters.is_unread;
-      if (parsedFilters.urgency_min !== null && parsedFilters.urgency_min >= 0.7) updatedFilters.is_urgent = true;
+      if (parsedFilters.urgency_min !== null && parsedFilters.urgency_min! >= 0.7) updatedFilters.is_urgent = true;
       if (parsedFilters.needs_reply !== null) updatedFilters.needs_reply = parsedFilters.needs_reply;
       
       if (parsedFilters.date_range) {

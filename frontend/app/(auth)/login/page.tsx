@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { Sparkles, ShieldCheck, Mail, AlertCircle, ArrowRight, ArrowLeft } from "lucide-react";
+import { Sparkles, ShieldCheck, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const [isDemoOpen, setIsDemoOpen] = useState(false);
   const [demoEmail, setDemoEmail] = useState("demo_user@inboxpilot.ai");
@@ -193,5 +193,17 @@ export default function LoginPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-slate-900 border border-white/5 rounded-3xl p-8 flex flex-col items-center justify-center min-h-[300px]">
+        <span className="w-8 h-8 border-4 border-violet-600/20 border-t-violet-650 rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }

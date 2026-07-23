@@ -6,7 +6,7 @@ from pydantic import Field
 class Settings(BaseSettings):
     APP_ENV: str = "development"
     SECRET_KEY: str = Field(default="dev_secret_key_change_me_in_production_123456")
-    # Base64 encoded 32-byte key for Fernet token encryption
+
     ENCRYPTION_KEY: str = Field(default="t-NzY25jRlpGdzY2bzdhRjhkZmxmaDk3d3NmNjg5MWE=")
     ALLOWED_ORIGINS: str = Field(default="http://localhost:3000")
 

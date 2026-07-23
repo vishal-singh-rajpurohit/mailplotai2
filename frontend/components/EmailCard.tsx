@@ -83,7 +83,9 @@ export default function EmailCard({ email, isSelected, onClick }: EmailCardProps
             </span>
           )}
           {email.summary && (
-            <Sparkles className="w-3.5 h-3.5 text-violet-500/70" title="AI analyzed" />
+            <span title="AI analyzed">
+              <Sparkles className="w-3.5 h-3.5 text-violet-500/70" />
+            </span>
           )}
         </div>
 
